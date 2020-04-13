@@ -12,15 +12,43 @@
                 <td>{{ categorie.id }}</td>
             </tr>
             <tr>
-                <th>Titre</th>
+                <td>titre</td>
                 <td>{{ categorie.titre }}</td>
+               
+            </tr>
+            <tr>
+            <td>Articles</td>
+                 <td>
+                    <a href="{{ path('article_show', {'id': categorie.id}) }}">show</a>
+                </td>
             </tr>
         </tbody>
     </table>
+     <div class="d-flex">
+           {% if is_granted('ROLE_ADMIN') %}
+                <a class="p-2" href="{{ path('categorie_edit', {'id': categorie.id}) }}">edit</a>
+                <br>
+                 {{ include('categorie/_delete_form.html.twig') }}
+            {% endif %} 
+            <a href="{{ path('categorie_index') }}" class="p-2">back to list</a>
+     </div>
+        
+    
+  <h2>Articles de cet catégories</h2>
 
-    <a href="{{ path('categorie_index') }}">back to list</a>
+    {% if articles is not empty%}
+        {% for article in articles %}
+           <div class="d-flex flex-column border border-dark p-3">
+                <p>{{ article.titre}}</p>
+                <p>{{ article.contenu}}</p>
+               <div class='d-flex'>
+                    <p class='px-1'> De {{ article.auteur}}</p>
+                    <p> à {{ article.date|date('Y-m-d H:i:s') }}</p>
+               </div>
+           </div>
 
-    <a href="{{ path('categorie_edit', {'id': categorie.id}) }}">edit</a>
-
-    {{ include('categorie/_delete_form.html.twig') }}
+        {% endfor %}
+    {% else %}
+    <p>Il n'y a aucun commentaire pour cet article
+    {% endif %}
 {% endblock %}

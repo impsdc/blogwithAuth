@@ -33,10 +33,15 @@ class Commentaire
     private $auteur;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\article", inversedBy="commentaires")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Article", inversedBy="commentaires")
      * @ORM\JoinColumn(nullable=false)
      */
     private $article;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $date;
 
     public function getId(): ?int
     {
@@ -90,4 +95,17 @@ class Commentaire
 
         return $this;
     }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): self
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
 }

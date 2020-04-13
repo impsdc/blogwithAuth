@@ -4,6 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Categorie;
 use App\Form\CategorieType;
+
+use App\Entity\Article;
+use App\Form\ArticleType;
+
 use App\Repository\CategorieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,22 +17,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class CategorieController extends AbstractController
 {
     /**
-     * @Route("/", name="home", methods={"GET"})
-     */
-    public function home(CategorieRepository $categorieRepository): Response
-    {
-        return $this->render('home/index.html.twig', [
-            'categories' => $categorieRepository->findAll(),
-        ]);
-    }
-
-    /**
      * @Route("/categories", name="categorie_index", methods={"GET"})
      */
     public function index(CategorieRepository $categorieRepository): Response
     {
         return $this->render('home/index.html.twig', [
-            'categories' => $categorieRepository->findAll(),
+            'categories' => $categorieRepository->findLastThree(),
         ]);
     }
 
@@ -60,8 +54,15 @@ class CategorieController extends AbstractController
      */
     public function show(Categorie $categorie): Response
     {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $articles = $entityManager->getRepository(Article::class)->findBy([
+            "categorie" => $categorie
+        ]);
+
         return $this->render('categorie/show.html.twig', [
             'categorie' => $categorie,
+            'articles' => $articles
         ]);
     }
 

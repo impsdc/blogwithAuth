@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PaysController!{% endblock %}
+
+{% block body %}
+    <h1>Users</h1>
+    {% if users is not empty %}
+    <table class="table" border="1">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>change to autheur</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.roles|join(', ') }}</td>
+                    <td> 
+                        <a href="{{ path('editRole', {'id': user.id}) }}">
+                            Change
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>il n'y a pas de user<p>
+    {% endif %}
+{% endblock %}

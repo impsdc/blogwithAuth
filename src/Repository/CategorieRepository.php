@@ -18,23 +18,20 @@ class CategorieRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Categorie::class);
     }
-
-    // /**
-    //  * @return Categorie[] Returns an array of Categorie objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    
+    /**
+      * @return Article[] Returns an array of Article objects
+      */
+    public function findLastThree()
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
+            ->orderBy('c.id', 'DESC')
+            ->setMaxResults(3) //LIMIT 3
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Categorie

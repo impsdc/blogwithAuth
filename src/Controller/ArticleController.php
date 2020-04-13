@@ -2,9 +2,16 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Article;
 use App\Form\ArticleType;
+
+use App\Form\CommentaireType;
+use App\Entity\Commentaire;
+
 use App\Repository\ArticleRepository;
+
+use App\Repository\CommentaireRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ArticleController extends AbstractController
 {
     /**
-     * @Route("/articles", name="article_index", methods={"GET"})
+     * @Route("/", name="article_index", methods={"GET"})
      */
     public function index(ArticleRepository $articleRepository): Response
     {
@@ -34,11 +41,16 @@ class ArticleController extends AbstractController
         $article = new Article();
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
+
         $date = new DateTime('now');
-        $article->setDate($date);
+        
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+
+            $article->setDate($date);
+            $article->setAuteur($this->getUser());  
+
             $entityManager->persist($article);
             $entityManager->flush();
 
@@ -52,12 +64,35 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="article_show", methods={"GET"})
+     * @Route("/{id}", name="article_show", methods={"GET", "POST"})
      */
-    public function show(Article $article): Response
+    public function show(Article $article, $id, Request $request): Response
     {
+        $em = $this->getDoctrine()->getManager();
+        $comment = new Commentaire();
+        $form = $this->createForm(CommentaireType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $comment->setDate(new \DateTime());
+            $comment->setAuteur($this->getUser());
+            $comment->setArticle($article);
+            $comment->setEtat(true);
+
+            $em->persist($comment);
+            $em->flush();
+
+        }
+
+        $comments = $em->getRepository(Commentaire::class)->findby([
+            "article" => $article
+        ]);
+
         return $this->render('article/show.html.twig', [
             'article' => $article,
+            'comments' => $comments,
+            'formComment' => $form->createView()
         ]);
     }
 
